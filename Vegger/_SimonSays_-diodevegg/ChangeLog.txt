@@ -1,0 +1,5 @@
+ChangeLog for the SimonSays software running on the SimonSays wall.
+
+12/4: Changed max levelcap to 99, and added a fancy rainbow animation when the
+player beats level 99. Also a small general speed up of animations.
+Namely changed dispTime to 700 (from 800) and faster row-flashes.
