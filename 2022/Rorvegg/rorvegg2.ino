@@ -35,6 +35,7 @@ int digitalPins[] = {11,  9, 10};
 
 //input pins
 int inputPins[] = {4, 5, 6};
+int wrongInputPin = 0;
 
 //Riktige pwm verdier for viftene. Disse verdiene varierer litt
 const int FAN1 = 155;
@@ -64,6 +65,8 @@ void setup() {
     analogWrite(digitalPins[i], 150);
   }
 
+  pinMode(wrongInputPin, INPUT_PULLUP);
+
   delay(3000);
   for(int i = 0; i < 3; i++) {
     analogWrite(digitalPins[i], 0);
@@ -83,7 +86,7 @@ void loop() {
   for (int i = 255; i > 40; i--){
     analogWrite(3, i);
     delay(10);
-    if (analogRead(A3) >500){
+    if (analogRead(A3) > 500){
       check_results();
     }
   }
@@ -96,15 +99,22 @@ void check_results() {
    */
   for(int i = 0; i < 3; i++) {
     int res = digitalRead(inputPins[i]);
+    int wrongRes = digitalRead(wrongInputPin);
     Serial.print(i);
     Serial.print(": ");
-    Serial.println(!res);
-    if (res == LOW) {
+    Serial.print(!res);
+    Serial.print("  WrongPin: ");
+    Serial.println(!wrongRes);
+
+    if (wrongRes == LOW) {
+      fan_random(i);
+    } else if (res == LOW) {
       fan_correct(i);
     } else {
       fan_random(i);
     }
   }
+  
   Serial.println("\n");
 }
 
@@ -143,7 +153,7 @@ void fan_random(int fan) {
    * Dersom den tilfeldige verdien er for nærme den riktige vil den prøve på nytt i et rekursvit kall
    */
   int fanList[] = {FAN1, FAN2, FAN3};
-  long r = random(95, 256);
+  long r = random(95, 210);
 
   if (abs(r - fanList[fan]) < 20) {
     fan_random(fan);
